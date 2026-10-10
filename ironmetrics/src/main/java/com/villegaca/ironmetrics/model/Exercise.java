@@ -23,4 +23,6 @@ public class Exercise {
     private String name;
 
     private String notes;
+
+    private String photoUrl;
 }

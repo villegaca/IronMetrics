@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class Set {
     private boolean isCompleted;
 
     @ManyToOne (fetch = FetchType.LAZY, optional = false)
-    @JoinColumn (name = "workout_exercise_id", nullable = false)
+    @JoinColumns({
+        @JoinColumn (name = "workout_id", referencedColumnName = "workout_id", nullable = false),
+        @JoinColumn (name = "exercise_id", referencedColumnName = "exercise_id", nullable = false)
+    }) 
     private WorkoutExercise workoutExercise;
 }

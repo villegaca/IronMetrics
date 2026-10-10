@@ -2,13 +2,13 @@ package com.villegaca.ironmetrics.model;
 
 import java.io.Serializable;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity 
+@Embeddable 
 @Getter 
 @Setter 
 @NoArgsConstructor 

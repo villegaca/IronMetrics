@@ -23,8 +23,8 @@ public class WorkoutService {
     }
 
     // find all workouts
-    public List<Workout> getAllWorkouts () {
-        return workoutRepo.findAll();
+    public List<Workout> getAllWorkouts(Long userId) {
+        return workoutRepo.findByUserId(userId);
     }
 
     // create and add user connection

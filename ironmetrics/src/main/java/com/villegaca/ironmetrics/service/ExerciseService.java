@@ -27,6 +27,11 @@ public class ExerciseService {
 
         return exercise.get();
     }
+
+    // find exercises by name search
+    public List<Exercise> searchExercises(String name) {
+        return repo.findByName(name);
+    }
     
     // create new exercise and save to db
     public Exercise createExercise (Exercise exercise) {

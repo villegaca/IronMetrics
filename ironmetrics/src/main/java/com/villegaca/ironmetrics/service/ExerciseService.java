@@ -30,7 +30,7 @@ public class ExerciseService {
 
     // find exercises by name search
     public List<Exercise> searchExercises(String name) {
-        return repo.findByName(name);
+        return repo.findByNameContainingIgnoreCase(name);
     }
     
     // create new exercise and save to db

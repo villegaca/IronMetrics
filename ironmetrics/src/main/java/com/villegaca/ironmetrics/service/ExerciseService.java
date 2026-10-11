@@ -2,11 +2,13 @@ package com.villegaca.ironmetrics.service;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 import com.villegaca.ironmetrics.model.Exercise;
 import com.villegaca.ironmetrics.repository.ExerciseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
+@Service 
 @AllArgsConstructor 
 public class ExerciseService {
     private final ExerciseRepository repo;

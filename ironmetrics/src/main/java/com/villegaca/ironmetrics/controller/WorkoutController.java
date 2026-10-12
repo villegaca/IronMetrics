@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.villegaca.ironmetrics.dto.WorkoutRequest;
-import com.villegaca.ironmetrics.dto.WorkoutResponse;
+import com.villegaca.ironmetrics.dto.workout.WorkoutRequest;
+import com.villegaca.ironmetrics.dto.workout.WorkoutResponse;
 import com.villegaca.ironmetrics.model.Workout;
 import com.villegaca.ironmetrics.service.WorkoutService;
 

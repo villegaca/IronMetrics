@@ -24,7 +24,7 @@ public class WorkoutExerciseService {
     private final ExerciseService exerciseService;
 
     // add exercise to workout
-    public WorkoutExercise addExercise(Long workoutId, Long exerciseId) {
+    public WorkoutExercise addExercise(Long workoutId, Long exerciseId) {   
         Workout workout = workoutService.getWorkoutById(workoutId);
         Exercise exercise = exerciseService.getExerciseById(exerciseId);
 
@@ -44,18 +44,14 @@ public class WorkoutExerciseService {
 
     // remove an exercise from workout
     public void removeExercise(Long workoutId, Long exerciseId) {
-        Workout workout = workoutService.getWorkoutById(workoutId);
-        Exercise exercise = exerciseService.getExerciseById(exerciseId);
-
         WorkoutExerciseId id = new WorkoutExerciseId(workoutId, exerciseId);
-
         WorkoutExercise workoutExercise = getWorkoutExercise(id);
 
         repo.delete(workoutExercise);
     }
 
     // retrieve all exercises from workout
-    public List<WorkoutExercise> getAllExercises(Long workoutId, Long exerciseId) {
+    public List<WorkoutExercise> getAllExercises(Long workoutId) {
         return repo.findByWorkout_Id(workoutId);
     }
 

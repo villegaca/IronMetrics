@@ -52,6 +52,6 @@ public class ExerciseService {
     // delete exercise
     public void deleteExercise (Long id) {
         Exercise exercise = getExerciseById(id);
-        repo.delete(exercise);;
+        repo.delete(exercise);
     }
 }

@@ -1,10 +1,9 @@
-package com.villegaca.ironmetrics.dto;
+package com.villegaca.ironmetrics.dto.workout;
 
 import java.time.LocalDateTime;
 
-public record WorkoutResponse (
-    Long id,
+public record WorkoutRequest (
     String name,
     LocalDateTime startedAt,
     LocalDateTime completedAt
- ) {}
+) {}

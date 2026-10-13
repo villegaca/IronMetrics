@@ -1,7 +1,11 @@
 package com.villegaca.ironmetrics.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.villegaca.ironmetrics.dto.AppUser.AppUserRequest;
+import com.villegaca.ironmetrics.dto.AppUser.AppUserResponse;
+import com.villegaca.ironmetrics.mapper.AppUserMapper;
 import com.villegaca.ironmetrics.model.AppUser;
 import com.villegaca.ironmetrics.repository.AppUserRepository;
 
@@ -20,34 +24,39 @@ public class AppUserService {
                 new EntityNotFoundException("User not found" + id));
     }
 
+    // same as getUserById but returns a DTO
+    public AppUserResponse getUserResponseById (Long id) {
+        AppUser user = getUserById(id);
+        return AppUserMapper.appUserResponse(user);
+    }
+
     // create new user
-    public AppUser createUser (AppUser user) {
-        return repo.save(user);
+    public AppUserResponse createUser (AppUserRequest request) {
+        AppUser user = new AppUser();
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        user.setEmail(request.email());
+        user.setPassword(request.password());          // hash password COME BACK HERE
+        user.setLastName(request.lastName());
+
+        AppUser createdUser = repo.save(user);
+
+        // method creates DTO reponse
+        return AppUserMapper.appUserResponse(createdUser);
     }
 
-    // update fist name
-    public AppUser updateFirstName (Long id, String updatedFirstName) {
-        AppUser currentUser = getUserById(id);
-        currentUser.setFirstName(updatedFirstName);
+    // edit user info
+    public AppUserResponse editUser(Long userId, AppUserRequest request) {
+        AppUser currentUser = getUserById(userId);
+        currentUser.setFirstName(request.firstName());
+        currentUser.setLastName(request.lastName());
+        currentUser.setEmail(request.email());
+        currentUser.setPassword(request.password());
 
-        return repo.save(currentUser);
-    }
+        AppUser updatedUser = repo.save(currentUser);
 
-    // update last name
-    public AppUser updateLastName (Long id, String updatedLastName) {
-        AppUser currentUser = getUserById(id);
-        currentUser.setLastName(updatedLastName);
-
-        return repo.save(currentUser);
-    }
-
-    // update email
-    public AppUser updateEmail (Long id, String updatedEmail) {
-        AppUser currentUser = getUserById(id);
-
-        currentUser.setEmail(updatedEmail);
-
-        return repo.save(currentUser);
+        // method creates DTO reponse
+        return AppUserMapper.appUserResponse(updatedUser);
     }
 
     // delete user

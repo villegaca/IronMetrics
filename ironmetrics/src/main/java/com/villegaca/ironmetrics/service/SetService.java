@@ -9,7 +9,6 @@ import com.villegaca.ironmetrics.model.Set;
 import com.villegaca.ironmetrics.model.WorkoutExercise;
 import com.villegaca.ironmetrics.model.WorkoutExerciseId;
 import com.villegaca.ironmetrics.repository.SetRepository;
-import com.villegaca.ironmetrics.repository.WorkoutExerciseRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

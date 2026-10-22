@@ -1,7 +1,6 @@
 package com.villegaca.ironmetrics.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.villegaca.ironmetrics.dto.AppUser.AppUserRequest;
 import com.villegaca.ironmetrics.dto.AppUser.AppUserResponse;

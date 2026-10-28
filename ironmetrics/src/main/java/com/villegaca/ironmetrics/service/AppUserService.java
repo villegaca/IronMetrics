@@ -1,7 +1,10 @@
 package com.villegaca.ironmetrics.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.villegaca.ironmetrics.dto.AppUser.AppUserRequest;
 import com.villegaca.ironmetrics.dto.AppUser.AppUserResponse;
 import com.villegaca.ironmetrics.mapper.AppUserMapper;
@@ -35,12 +38,16 @@ public class AppUserService {
         // encode password
         String encodedPassword = passwordEncoder.encode(request.password());
 
+        // check if email exists already
+        if (repo.existsByEmail(request.email())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "email already exists");
+        }
+        
         AppUser user = new AppUser();
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPassword(encodedPassword);
-        user.setLastName(request.lastName());
 
         AppUser createdUser = repo.save(user);
 

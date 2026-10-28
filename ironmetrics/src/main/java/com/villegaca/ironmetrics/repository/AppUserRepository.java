@@ -1,9 +1,11 @@
 package com.villegaca.ironmetrics.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.villegaca.ironmetrics.model.AppUser;
 
 public interface AppUserRepository extends JpaRepository<AppUser, Long>{
-    
+    Optional<AppUser> findByEmail(String email);
 }

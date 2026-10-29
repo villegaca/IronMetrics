@@ -1,7 +1,5 @@
 package com.villegaca.ironmetrics.config;
 
-import java.net.http.HttpClient;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,7 +21,7 @@ public class SecurityConfig {
             .sessionManagement(session -> 
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register").permitAll()
+                .requestMatchers("/", "/api/auth/login", "/api/auth/register").permitAll()
                 .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> 
                 oauth2.jwt(jwt -> {}));

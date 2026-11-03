@@ -25,7 +25,7 @@ public class JwtConfig {
     public SecretKey JwtSecretKey(@Value("${security.jwt.secret}") String secret) {
         byte[] decodedSecret = Base64.getDecoder().decode(secret);
 
-        return new SecretKeySpec(decodedSecret, secret);
+        return new SecretKeySpec(decodedSecret, "HmacSHA256");
     }
 
     // encoder

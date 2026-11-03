@@ -7,5 +7,5 @@ import com.villegaca.ironmetrics.model.Workout;
 
 public interface WorkoutRepository extends JpaRepository<Workout, Long>{
 
-    List<Workout> findByEmail(String email);
+    List<Workout> findByUser_Email(String email);
 }

@@ -57,7 +57,7 @@ public class WorkoutServiceTest {
         Jwt jwt = mock(Jwt.class);
         when(jwt.getSubject()).thenReturn("jane@example.com");
 
-        when(repo.findByEmail(jwt.getSubject())).thenReturn(workouts);
+        when(repo.findByUser_Email(jwt.getSubject())).thenReturn(workouts);
 
         List<Workout> result = service.getAllWorkouts(jwt.getSubject());
 

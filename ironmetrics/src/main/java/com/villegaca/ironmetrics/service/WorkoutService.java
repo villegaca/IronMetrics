@@ -23,7 +23,7 @@ public class WorkoutService {
 
     // find all workouts with user email
     public List<Workout> getAllWorkouts(String email) {
-        return workoutRepo.findByEmail(email);
+        return workoutRepo.findByUser_Email(email);
     }
 
     // create and add user connection

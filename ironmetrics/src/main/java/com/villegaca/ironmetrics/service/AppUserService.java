@@ -20,16 +20,16 @@ public class AppUserService {
     private final AppUserRepository repo;
     private final PasswordEncoder passwordEncoder;
 
-    //find user by id and handle excpetions
-    public AppUser getUserById (Long id) {
-        return repo.findById(id)
-            .orElseThrow(() -> 
-                new EntityNotFoundException("User not found" + id));
+    // find user by id and handle exceptions
+    public AppUser getUserByEmail(String email) {
+        return repo.findByEmail(email)
+            .orElseThrow(() ->
+                new EntityNotFoundException("User not found" + email));
     }
 
     // same as getUserById but returns a DTO
-    public AppUserResponse getUserResponseById (Long id) {
-        AppUser user = getUserById(id);
+    public AppUserResponse getUserResponseById (String email) {
+        AppUser user = getUserByEmail(email);
         return AppUserMapper.appUserResponse(user);
     }
 
@@ -56,10 +56,10 @@ public class AppUserService {
     }
 
     // edit user info
-    public AppUserResponse editUser(Long userId, AppUserRequest request) {
+    public AppUserResponse editUser(String email, AppUserRequest request) {
         String encodedPassword = passwordEncoder.encode(request.password());
 
-        AppUser currentUser = getUserById(userId);
+        AppUser currentUser = getUserByEmail(email);
         currentUser.setFirstName(request.firstName());
         currentUser.setLastName(request.lastName());
         currentUser.setEmail(request.email());
@@ -72,7 +72,7 @@ public class AppUserService {
     }
 
     // delete user
-    public void deleteUser (Long id) {
-        repo.deleteById(id);
+    public void deleteUser (String email) {
+        repo.deleteByEmail(email);
     }
 }

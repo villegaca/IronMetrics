@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.villegaca.ironmetrics.model.AppUser;
 import com.villegaca.ironmetrics.model.Workout;
-import com.villegaca.ironmetrics.repository.AppUserRepository;
 import com.villegaca.ironmetrics.repository.WorkoutRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor 
 public class WorkoutService {
     private final WorkoutRepository workoutRepo;
-    private final AppUserRepository userRepo;
+    private final AppUserService userService;
 
     // find by id
     public Workout getWorkoutById (Long id) {
@@ -22,19 +21,15 @@ public class WorkoutService {
                 new EntityNotFoundException("Workout not found: " + id)); 
     }
 
-    // find all workouts
-    public List<Workout> getAllWorkouts(Long userId) {
-        return workoutRepo.findByUserId(userId);
+    // find all workouts with user email
+    public List<Workout> getAllWorkouts(String email) {
+        return workoutRepo.findByEmail(email);
     }
 
     // create and add user connection
-    public Workout createWorkout (Workout workout, Long userId) {
-        AppUser user = userRepo.findById(userId)
-            .orElseThrow(() ->
-                new EntityNotFoundException("User not found: " + userId));
-        
+    public Workout createWorkout (Workout workout, String email) {
+        AppUser user = userService.getUserByEmail(email);
         workout.setUser(user);
-
         return workoutRepo.save(workout);
     }
 

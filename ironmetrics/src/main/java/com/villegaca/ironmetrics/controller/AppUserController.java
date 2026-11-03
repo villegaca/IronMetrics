@@ -1,6 +1,8 @@
 package com.villegaca.ironmetrics.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,27 +20,30 @@ import lombok.AllArgsConstructor;
 
 
 @RestController 
-@RequestMapping ("/api/users/{userId}")
+@RequestMapping ("/api/user")
 @AllArgsConstructor 
 public class AppUserController {
     private final AppUserService service;
 
     // get user
-    @GetMapping
-    public ResponseEntity<AppUserResponse> getUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(service.getUserResponseById(userId));
+    @GetMapping("/getUser")
+    public ResponseEntity<AppUserResponse> getUser(@AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        return ResponseEntity.ok(service.getUserResponseById(email));
     }
 
     // edit user
-    @PutMapping
-    public ResponseEntity<AppUserResponse> editUser(@PathVariable Long userId, @Valid @RequestBody AppUserRequest request) {
-        return ResponseEntity.ok(service.editUser(userId, request));
+    @PutMapping("/editUser")
+    public ResponseEntity<AppUserResponse> editUser(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody AppUserRequest request) {
+        String email = jwt.getSubject();
+        return ResponseEntity.ok(service.editUser(email, request));
     }
 
     // delete user
-    @DeleteMapping
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        service.deleteUser(userId);
+    @DeleteMapping("/deleteUser")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        service.deleteUser(email);
         return ResponseEntity.noContent().build();
     }
 

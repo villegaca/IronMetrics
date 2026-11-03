@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.villegaca.ironmetrics.dto.muscle.MuscleResponse;
@@ -26,8 +28,9 @@ public class MuscleStatisticsService {
     private final SetRepository setRepo;
 
     // get all the users workouts and their exercises
-    public List<MuscleResponse> getMusclesWorked(Long userId) {
-        List<Workout> workouts = workoutService.getAllWorkouts(userId);
+    public List<MuscleResponse> getMusclesWorked(@AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        List<Workout> workouts = workoutService.getAllWorkouts(email);
         Map<Long, MuscleResponse> muscles = new HashMap<>();
 
         for (Workout workout : workouts) {

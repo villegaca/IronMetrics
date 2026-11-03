@@ -3,6 +3,8 @@ package com.villegaca.ironmetrics.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.villegaca.ironmetrics.dto.workout.WorkoutRequest;
@@ -42,9 +43,9 @@ public class WorkoutController {
 
     // get all workouts
     @GetMapping
-    public List<WorkoutResponse> getAllWorkouts (@RequestParam Long userId) {
-
-        return service.getAllWorkouts(userId)
+    public List<WorkoutResponse> getAllWorkouts (@AuthenticationPrincipal  Jwt jwt) {
+        String email = jwt.getSubject();
+        return service.getAllWorkouts(email)
             .stream()
             .map(workout -> new WorkoutResponse(           // for each workout entity, make a new workoutResponse
                 workout.getId(),
@@ -57,12 +58,13 @@ public class WorkoutController {
 
     // create workout
     @PostMapping
-    public WorkoutResponse createWorkout(@RequestBody WorkoutRequest request, @RequestParam Long userId) {
+    public WorkoutResponse createWorkout(@RequestBody WorkoutRequest request, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
         Workout workout = new Workout();
         workout.setName(request.name());
         workout.setStartedAt(request.startedAt());
 
-        Workout savedWorkout = service.createWorkout(workout, userId);
+        Workout savedWorkout = service.createWorkout(workout, email);
 
         return new WorkoutResponse(
             savedWorkout.getId(),

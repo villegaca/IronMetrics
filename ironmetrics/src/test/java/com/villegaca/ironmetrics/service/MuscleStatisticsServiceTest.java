@@ -2,6 +2,7 @@
 package com.villegaca.ironmetrics.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.villegaca.ironmetrics.dto.muscle.MuscleResponse;
 import com.villegaca.ironmetrics.model.Exercise;
@@ -55,7 +57,10 @@ class MuscleStatisticsServiceTest {
 
     @Test
     void getMusclesWorked_returnsMusclesForCompletedExercises() {
-        when(workoutService.getAllWorkouts(5L)).thenReturn(List.of(workout));
+        Jwt jwt = mock(Jwt.class);
+
+        when(jwt.getSubject()).thenReturn("jane@example.com");
+        when(workoutService.getAllWorkouts(jwt.getSubject())).thenReturn(List.of(workout));
 
         when(workout.getId()).thenReturn(1L);
         when(workout.getWorkoutExercises()).thenReturn(List.of(workoutExercise));
@@ -76,7 +81,7 @@ class MuscleStatisticsServiceTest {
 
         when(exerciseMuscleRepo.findByExercise_Id(100L)).thenReturn(List.of(exerciseMuscle));
 
-        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(5L);
+        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(jwt);
 
         assertEquals(1, result.size());
         verify(exerciseMuscleRepo).findByExercise_Id(100L);
@@ -84,7 +89,10 @@ class MuscleStatisticsServiceTest {
 
     @Test
     void getMusclesWorked_ignoresExercisesWithoutCompletedSets() {
-        when(workoutService.getAllWorkouts(5L)).thenReturn(List.of(workout));
+        Jwt jwt = mock(Jwt.class);
+
+        when(jwt.getSubject()).thenReturn("jane@example.com");
+        when(workoutService.getAllWorkouts(jwt.getSubject())).thenReturn(List.of(workout));
 
         when(workout.getId()).thenReturn(1L);
         when(workout.getWorkoutExercises()).thenReturn(List.of(workoutExercise));
@@ -99,7 +107,7 @@ class MuscleStatisticsServiceTest {
                 .findByWorkoutExercise_Id_WorkoutIdAndWorkoutExercise_Id_ExerciseId(1L, 100L))
                 .thenReturn(List.of(incompleteSet));
 
-        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(5L);
+        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(jwt);
 
         assertEquals(0, result.size());
 
@@ -110,8 +118,11 @@ class MuscleStatisticsServiceTest {
     void getMusclesWorked_doesNotIncludeDuplicateMuscles() {
         WorkoutExercise secondWorkoutExercise = mock(WorkoutExercise.class);
         Exercise secondExercise = mock(Exercise.class);
+        Jwt jwt = mock(Jwt.class);
 
-        when(workoutService.getAllWorkouts(5L)).thenReturn(List.of(workout));
+        when(jwt.getSubject()).thenReturn("jane@example.com");
+
+        when(workoutService.getAllWorkouts(jwt.getSubject())).thenReturn(List.of(workout));
 
         when(workout.getId()).thenReturn(1L);
         when(workout.getWorkoutExercises()).thenReturn(List.of(workoutExercise, secondWorkoutExercise));
@@ -144,7 +155,7 @@ class MuscleStatisticsServiceTest {
 
         when(exerciseMuscleRepo.findByExercise_Id(200L)).thenReturn(List.of(exerciseMuscle));
 
-        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(5L);
+        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(jwt);
 
         assertEquals(1, result.size());
         verify(exerciseMuscleRepo).findByExercise_Id(100L);
@@ -153,9 +164,13 @@ class MuscleStatisticsServiceTest {
 
     @Test
     void getMusclesWorked_returnsEmptyListWhenUserHasNoWorkouts() {
-        when(workoutService.getAllWorkouts(5L)).thenReturn(List.of());
+        Jwt jwt = mock(Jwt.class);
 
-        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(5L);
+        when(jwt.getSubject()).thenReturn("jane@example.com");
+        
+        when(workoutService.getAllWorkouts("jane@example.com")).thenReturn(List.of());
+
+        List<MuscleResponse> result = muscleStatisticsService.getMusclesWorked(jwt);
 
         assertEquals(0, result.size());
         verifyNoInteractions(setRepo, exerciseMuscleRepo);

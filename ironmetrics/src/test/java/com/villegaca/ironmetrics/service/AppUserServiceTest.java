@@ -31,12 +31,12 @@ public class AppUserServiceTest {
     @Test
     void getUserById_returnsUser_whenUserExists() {
         AppUser user = new AppUser();
-        user.setId(1L);
+        user.setEmail("1L");
         user.setFirstName("Alex");
 
-        when(appUserRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(appUserRepository.findByEmail("1L")).thenReturn(Optional.of(user));
 
-        AppUser result = appUserService.getUserById(1L);
+        AppUser result = appUserService.getUserByEmail("1L");
 
         assertEquals(1L, result.getId());
         assertEquals("Alex", result.getFirstName());
@@ -46,12 +46,13 @@ public class AppUserServiceTest {
     @Test
     void editUser_updatesUserAndReturnsResponse() {
         Long userId = 1L;
+        String email = "john@example.com";
 
         AppUser currentUser = new AppUser();
         currentUser.setId(userId);
         currentUser.setFirstName("John");
         currentUser.setLastName("Smith");
-        currentUser.setEmail("john@example.com");
+        currentUser.setEmail(email);
         currentUser.setPassword("oldPassword");
 
         AppUserRequest request = new AppUserRequest(
@@ -61,12 +62,12 @@ public class AppUserServiceTest {
             "newPassword"
         );
 
-        when(appUserRepository.findById(userId)).thenReturn(Optional.of(currentUser));
+        when(appUserRepository.findByEmail(email)).thenReturn(Optional.of(currentUser));
 
         when(appUserRepository.save(any(AppUser.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
 
-        AppUserResponse response = appUserService.editUser(userId, request);
+        AppUserResponse response = appUserService.editUser(email, request);
 
         assertEquals("Jane", response.firstName());
         assertEquals("Doe", response.lastName());
@@ -79,8 +80,9 @@ public class AppUserServiceTest {
     // test deleting a user
     @Test
     void deleteUser_deletesUserById() {
-        appUserService.deleteUser(1L);
+        String email = "jane@example.com";
+        appUserService.deleteUser(email);
 
-        verify(appUserRepository).deleteById(1L);
+        verify(appUserRepository).deleteByEmail(email);
     }
 }

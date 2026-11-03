@@ -3,6 +3,7 @@ package com.villegaca.ironmetrics.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.villegaca.ironmetrics.model.AppUser;
 import com.villegaca.ironmetrics.model.Workout;
@@ -33,6 +35,9 @@ public class WorkoutServiceTest {
     @InjectMocks 
     private WorkoutService service;
 
+    @Mock
+    private AppUserService userService;
+
     // test get a workout by its ID
     @Test 
     void getWorkoutById_returnsWorkoutWhenfound() {
@@ -49,10 +54,12 @@ public class WorkoutServiceTest {
     @Test 
     void getAllWorkouts_returnsAllWorkouts() {
         List<Workout> workouts = List.of(new Workout(), new Workout());
+        Jwt jwt = mock(Jwt.class);
+        when(jwt.getSubject()).thenReturn("jane@example.com");
 
-        when(repo.findByUserId(1L)).thenReturn(workouts);
+        when(repo.findByEmail(jwt.getSubject())).thenReturn(workouts);
 
-        List<Workout> result = service.getAllWorkouts(1L);
+        List<Workout> result = service.getAllWorkouts(jwt.getSubject());
 
         assertSame(workouts, result);
     }
@@ -61,13 +68,13 @@ public class WorkoutServiceTest {
     @Test 
     void createWorkout_addUserToCreatedWorkout() {
         Workout workout = new Workout();
-        long userId = 1L;
         AppUser user = new AppUser();
+        String email = "jane@example.com";
 
-        when(userRepo.findById(userId)).thenReturn(Optional.of(user));
+        when(userService.getUserByEmail(email)).thenReturn(user);
         when(repo.save(any(Workout.class))).thenAnswer(invocation -> invocation.getArgument(0));
         
-        Workout result = service.createWorkout(workout, userId);
+        Workout result = service.createWorkout(workout, email);
 
         assertSame(workout, result);
         assertSame(user, result.getUser());

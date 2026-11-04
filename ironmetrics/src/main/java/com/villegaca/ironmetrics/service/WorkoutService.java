@@ -1,6 +1,7 @@
 package com.villegaca.ironmetrics.service;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import com.villegaca.ironmetrics.model.AppUser;
 import com.villegaca.ironmetrics.model.Workout;
@@ -15,8 +16,8 @@ public class WorkoutService {
     private final AppUserService userService;
 
     // find by id
-    public Workout getWorkoutById (Long id) {
-        return workoutRepo.findById(id)
+    public Workout getWorkoutById (Long id, String email) {
+        return workoutRepo.findByIdAndUser_Email(id, email)
             .orElseThrow(() -> 
                 new EntityNotFoundException("Workout not found: " + id)); 
     }
@@ -34,8 +35,8 @@ public class WorkoutService {
     }
 
     // edit workout
-    public Workout editWorkout (Long id, Workout updatedWorkout) {
-        Workout currWorkout = getWorkoutById(id);
+    public Workout editWorkout (Long id, String email, Workout updatedWorkout) {
+        Workout currWorkout = getWorkoutById(id, email);
 
         currWorkout.setCompletedAt(updatedWorkout.getCompletedAt());
         currWorkout.setName(updatedWorkout.getName());
@@ -46,8 +47,8 @@ public class WorkoutService {
 
 
     // delete
-    public void deleteWorkout (Long id) {
-        Workout workout = getWorkoutById(id);
+    public void deleteWorkout (Long id, String email) {
+        Workout workout = getWorkoutById(id, email);
         workoutRepo.delete(workout);
     }
 }

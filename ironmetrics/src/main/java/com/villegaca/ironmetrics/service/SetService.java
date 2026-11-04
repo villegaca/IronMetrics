@@ -20,8 +20,9 @@ public class SetService {
     private final WorkoutExerciseService workoutExerciseService;
 
     // find by id
-    public Set getSetById (Long id) {
-        Optional<Set> set = setRepo.findById(id);
+    public Set getSetById (Long id, String email) {
+        // Optional<Set> set = setRepo.findById(id);
+        Optional<Set> set = setRepo.findByIdAndWorkoutExercise_Workout_User_Email(id, email);
 
         if(set.isEmpty()) {
             throw new EntityNotFoundException("Set not found: " + id);
@@ -31,14 +32,14 @@ public class SetService {
     }
 
     // get all sets
-    public List<Set> getAllSets () {
-        return setRepo.findAll();
+    public List<Set> getAllSets(String email) {
+        return setRepo.findByWorkoutExercise_Workout_User_Email(email);
     }
 
     // create a new set
-    public Set createSet (Long workoutId, Long exerciseId) {
+    public Set createSet (Long workoutId, Long exerciseId, String email) {
         WorkoutExerciseId id = new WorkoutExerciseId(workoutId, exerciseId);
-        WorkoutExercise workoutExercise = workoutExerciseService.getWorkoutExercise(id);
+        WorkoutExercise workoutExercise = workoutExerciseService.getWorkoutExercise(id, email);
 
         // calculate set number
         int nextSetNumber = setRepo.findFirstByWorkoutExerciseId_Id_WorkoutIdAndWorkoutExercise_Id_ExerciseIdOrderBySetNumberDesc(workoutId, exerciseId)
@@ -53,8 +54,8 @@ public class SetService {
     }
 
     // update set
-    public Set updateSet (Long id, SetRequest request) {
-        Set currentSet = getSetById(id);
+    public Set updateSet (Long id, String email, SetRequest request) {
+        Set currentSet = getSetById(id, email);
         currentSet.setWeight(request.weight());
         currentSet.setRepetition(request.repetition());
         currentSet.setRestSeconds(request.restSeconds());
@@ -64,8 +65,8 @@ public class SetService {
     }
 
     // delete a set
-    public void deleteSet (Long id) {
-        Set set = getSetById(id);
+    public void deleteSet (Long id, String email) {
+        Set set = getSetById(id, email);
         setRepo.delete(set);
     }
 }

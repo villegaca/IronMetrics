@@ -24,8 +24,8 @@ public class WorkoutExerciseService {
     private final ExerciseService exerciseService;
 
     // add exercise to workout
-    public WorkoutExercise addExercise(Long workoutId, Long exerciseId) {   
-        Workout workout = workoutService.getWorkoutById(workoutId);
+    public WorkoutExercise addExercise(Long workoutId, Long exerciseId, String email) {   
+        Workout workout = workoutService.getWorkoutById(workoutId, email);
         Exercise exercise = exerciseService.getExerciseById(exerciseId);
 
         WorkoutExercise workoutExercise = new WorkoutExercise();
@@ -43,21 +43,21 @@ public class WorkoutExerciseService {
     }
 
     // remove an exercise from workout
-    public void removeExercise(Long workoutId, Long exerciseId) {
+    public void removeExercise(Long workoutId, Long exerciseId, String email) {
         WorkoutExerciseId id = new WorkoutExerciseId(workoutId, exerciseId);
-        WorkoutExercise workoutExercise = getWorkoutExercise(id);
+        WorkoutExercise workoutExercise = getWorkoutExercise(id, email);
 
         repo.delete(workoutExercise);
     }
 
     // retrieve all exercises from workout
-    public List<WorkoutExercise> getAllExercises(Long workoutId) {
-        return repo.findByWorkout_Id(workoutId);
+    public List<WorkoutExercise> getAllExercises(Long workoutId, String email) {
+        return repo.findByWorkout_IdAndWorkout_User_Email(workoutId, email);
     }
 
     // get workout_exercise id
-    public WorkoutExercise getWorkoutExercise(WorkoutExerciseId id) {
-        return repo.findById(id)
+    public WorkoutExercise getWorkoutExercise(WorkoutExerciseId id, String email) {
+        return repo.findByIdAndWorkout_User_Email(id, email)
             .orElseThrow(() ->
                 new EntityNotFoundException("Exercise not found in workout: " + id));
     }

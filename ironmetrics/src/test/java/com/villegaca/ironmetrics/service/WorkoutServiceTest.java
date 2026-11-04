@@ -41,11 +41,12 @@ public class WorkoutServiceTest {
     // test get a workout by its ID
     @Test 
     void getWorkoutById_returnsWorkoutWhenfound() {
+        String email = "jane@example.com";
         Workout workout = new Workout();
 
         when(repo.findById(1L)).thenReturn(Optional.of(workout));
 
-        Workout result = service.getWorkoutById(1L);
+        Workout result = service.getWorkoutById(1L, email);
 
         assertSame(workout, result);
     }
@@ -83,6 +84,7 @@ public class WorkoutServiceTest {
     // test editting a workout
     @Test 
     void editWorkout_updateFieldsAndSavesWorkout() {
+        String email = "jane@example.com";
         Workout currentWorkout = new Workout();
         currentWorkout.setName("old");
         currentWorkout.setStartedAt(LocalDateTime.of(2026, 10, 20, 9, 0));
@@ -96,7 +98,7 @@ public class WorkoutServiceTest {
         when(repo.findById(1L)).thenReturn(Optional.of(currentWorkout));
         when(repo.save(currentWorkout)).thenReturn(currentWorkout);
 
-        Workout result = service.editWorkout(1L, updatedWorkout);
+        Workout result = service.editWorkout(1L, email, updatedWorkout);
 
         assertSame(currentWorkout, result);
         assertEquals("Push day", result.getName());
@@ -105,11 +107,12 @@ public class WorkoutServiceTest {
     // test deleting a workout
     @Test 
     void deleteWorkout() {
+        String email = "jane@example.com";
         Workout workout = new Workout();
 
         when(repo.findById(1L)).thenReturn(Optional.of(workout));
 
-        service.deleteWorkout(1L);
+        service.deleteWorkout(1L, email);
 
         verify(repo).delete(workout);
     }

@@ -40,21 +40,24 @@ public class WorkoutExerciseServiceTest {
     @InjectMocks 
     private WorkoutExerciseService service;
 
+    private final String email = "jane@example.com";
+
     // test addExercise
     @Test 
     void addExercise_savesWorkoutExerciseAndInitialSet() {
         Long workoutId = 1L;
         Long exerciseId = 2L;
+        String email = "jane@example.com";
 
         Workout workout = new Workout();
         Exercise exercise = new Exercise();
         
-        when(workoutService.getWorkoutById(1L)).thenReturn(workout);
+        when(workoutService.getWorkoutById(1L, email)).thenReturn(workout);
         when(exerciseService.getExerciseById(2L)).thenReturn(exercise);
 
         when(repo.save(any(WorkoutExercise.class))).thenAnswer(invocation -> invocation.getArgument(0));
         
-        WorkoutExercise result = service.addExercise(workoutId, exerciseId);
+        WorkoutExercise result = service.addExercise(workoutId, exerciseId, email);
 
         assertEquals(new WorkoutExerciseId(workoutId, exerciseId), result.getId());
     }
@@ -67,9 +70,9 @@ public class WorkoutExerciseServiceTest {
 
         workoutExercise.setId(id);
 
-        when(repo.findById(id)).thenReturn(Optional.of(workoutExercise));
+        when(repo.findByIdAndWorkout_User_Email(id, email)).thenReturn(Optional.of(workoutExercise));
 
-        service.removeExercise(1L, 2L);
+        service.removeExercise(1L, 2L, email);
 
         verify(repo).delete(workoutExercise);
     }
@@ -79,9 +82,10 @@ public class WorkoutExerciseServiceTest {
     void getAllExercises_returnsAllExercisesForWorkout() {
         List<WorkoutExercise> exercises = List.of(new WorkoutExercise());
 
-        when(repo.findByWorkout_Id(1L)).thenReturn(exercises);
+        // when(repo.findByWorkout_Id(1L)).thenReturn(exercises);
+        when(repo.findByWorkout_IdAndWorkout_User_Email(1L, email)).thenReturn(exercises);
 
-        List<WorkoutExercise> result = service.getAllExercises(1L);
+        List<WorkoutExercise> result = service.getAllExercises(1L, email);
 
         assertSame(exercises, result);
     }
@@ -93,9 +97,9 @@ public class WorkoutExerciseServiceTest {
         WorkoutExercise workoutExercise = new WorkoutExercise();
         workoutExercise.setId(id);
 
-        when(repo.findById(id)).thenReturn(Optional.of(workoutExercise));
+        when(repo.findByIdAndWorkout_User_Email(id, email)).thenReturn(Optional.of(workoutExercise));
 
-        WorkoutExercise result = service.getWorkoutExercise(id);
+        WorkoutExercise result = service.getWorkoutExercise(id, email);
 
         assertSame(workoutExercise, result);
     }

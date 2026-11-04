@@ -37,6 +37,8 @@ public class SetServiceTest {
     
     private Set testSet;
 
+    private final String email = "jane@exmaple.com";
+
     @BeforeEach
     void setUp() {
         testSet = new Set();
@@ -52,9 +54,9 @@ public class SetServiceTest {
     void getSetById_returnSetWhenFound() {
         Set expectedSet = new Set();
 
-        when(repo.findById(1L)).thenReturn(Optional.of(expectedSet));
+        when(repo.findByIdAndWorkoutExercise_Workout_User_Email(1L, email)).thenReturn(Optional.of(expectedSet));
 
-        Set acutalSet = service.getSetById(1L);
+        Set acutalSet = service.getSetById(1L, email);
 
         assertEquals(expectedSet, acutalSet);
     }
@@ -63,9 +65,9 @@ public class SetServiceTest {
     @Test 
     void getAllSets_returnAllSets() {
         List<Set> sets = List.of(testSet);
-        when(repo.findAll()).thenReturn(sets);
+        when(repo.findByWorkoutExercise_Workout_User_Email(email)).thenReturn(sets);
 
-        List<Set> result = service.getAllSets();
+        List<Set> result = service.getAllSets(email);
 
         assertSame(sets, result);
     }
@@ -79,7 +81,7 @@ public class SetServiceTest {
         WorkoutExerciseId id = new WorkoutExerciseId(workoutId, exerciseId);
         WorkoutExercise workoutExercise = new WorkoutExercise();
 
-        when(workoutExerciseService.getWorkoutExercise(id)).thenReturn(workoutExercise);
+        when(workoutExerciseService.getWorkoutExercise(id, email)).thenReturn(workoutExercise);
 
         when(repo
             .findFirstByWorkoutExerciseId_Id_WorkoutIdAndWorkoutExercise_Id_ExerciseIdOrderBySetNumberDesc(
@@ -88,7 +90,7 @@ public class SetServiceTest {
         
         when(repo.save(any(Set.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Set result = service.createSet(workoutId, exerciseId);
+        Set result = service.createSet(workoutId, exerciseId, email);
 
         assertEquals(1, result.getSetNumber());
         assertSame(workoutExercise, result.getWorkoutExercise());
@@ -97,7 +99,7 @@ public class SetServiceTest {
     // test updating a set
     @Test
     void updateSet_updatesFieldsAndSavesSet() {
-        when(repo.findById(1L)).thenReturn(Optional.of(testSet));
+        when(repo.findByIdAndWorkoutExercise_Workout_User_Email(1L, email)).thenReturn(Optional.of(testSet));
 
         SetRequest request = new SetRequest(
             new BigDecimal("225"),
@@ -108,7 +110,7 @@ public class SetServiceTest {
 
         when(repo.save(testSet)).thenReturn(testSet);
 
-        Set result = service.updateSet(1L, request);
+        Set result = service.updateSet(1L, email, request);
 
         assertSame(testSet, result);
         assertEquals(new BigDecimal("225"), result.getWeight());
@@ -122,9 +124,9 @@ public class SetServiceTest {
     // test deleting a set
     @Test 
     void deleteSet_deleteExistingSet() {
-        when(repo.findById(1L)).thenReturn(Optional.of(testSet));
+        when(repo.findByIdAndWorkoutExercise_Workout_User_Email(1L, email)).thenReturn(Optional.of(testSet));
 
-        service.deleteSet(1L);
+        service.deleteSet(1L, email);
 
         verify((repo)).delete(testSet);
     }

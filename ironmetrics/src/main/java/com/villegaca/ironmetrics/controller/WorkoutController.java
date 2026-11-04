@@ -30,8 +30,9 @@ public class WorkoutController {
 
     // get workout by id
     @GetMapping ("/{workoutId}")
-    public WorkoutResponse getWorkoutById(@PathVariable Long workoutId) {
-        Workout workout = service.getWorkoutById(workoutId);
+    public WorkoutResponse getWorkoutById(@PathVariable Long workoutId, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        Workout workout = service.getWorkoutById(workoutId, email);
 
         return new WorkoutResponse(
             workout.getId(),
@@ -42,7 +43,7 @@ public class WorkoutController {
     }
 
     // get all workouts
-    @GetMapping
+    @GetMapping ("/getAllWorkouts")
     public List<WorkoutResponse> getAllWorkouts (@AuthenticationPrincipal  Jwt jwt) {
         String email = jwt.getSubject();
         return service.getAllWorkouts(email)
@@ -57,7 +58,7 @@ public class WorkoutController {
     }
 
     // create workout
-    @PostMapping
+    @PostMapping ("/createWorkout")
     public WorkoutResponse createWorkout(@RequestBody WorkoutRequest request, @AuthenticationPrincipal Jwt jwt) {
         String email = jwt.getSubject();
         Workout workout = new Workout();
@@ -76,14 +77,14 @@ public class WorkoutController {
 
     // update workout
     @PutMapping ("/{workoutId}")
-    public WorkoutResponse updateWorkout(@PathVariable Long workoutId, @RequestBody WorkoutRequest request) {
-
+    public WorkoutResponse updateWorkout(@PathVariable Long workoutId, @RequestBody WorkoutRequest request, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
         Workout workout = new Workout();
         workout.setName(request.name());
         workout.setStartedAt(request.startedAt());
         workout.setCompletedAt(request.completedAt());
 
-        Workout updatedWorkout = service.editWorkout(workoutId, workout);
+        Workout updatedWorkout = service.editWorkout(workoutId, email, workout);
 
         return new WorkoutResponse(
             updatedWorkout.getId(),
@@ -95,9 +96,9 @@ public class WorkoutController {
 
     // delete workout
     @DeleteMapping ("/{workoutId}")
-    public ResponseEntity<Void> deleteWorkout (@PathVariable Long workoutId) {
-        
-        service.deleteWorkout(workoutId);
+    public ResponseEntity<Void> deleteWorkout (@PathVariable Long workoutId, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        service.deleteWorkout(workoutId, email);
         return ResponseEntity.noContent().build();
     }
 }

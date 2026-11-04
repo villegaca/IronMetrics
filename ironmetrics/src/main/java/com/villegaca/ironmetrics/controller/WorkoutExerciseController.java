@@ -3,6 +3,8 @@ package com.villegaca.ironmetrics.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +27,9 @@ public class WorkoutExerciseController {
 
     // get all exercises from workout
     @GetMapping 
-    public List<WorkoutExerciseResponse> getAllExercisesFromWorkout(@PathVariable Long workoutId) {
-        List<WorkoutExercise> workoutExercises = service.getAllExercises(workoutId);
+    public List<WorkoutExerciseResponse> getAllExercisesFromWorkout(@PathVariable Long workoutId, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        List<WorkoutExercise> workoutExercises = service.getAllExercises(workoutId, email);
         return workoutExercises.stream()
             .map(workoutExercise -> dtoResponse(workoutExercise))  // creates DTO for every object in workoutExercises list
             .toList();
@@ -34,8 +37,9 @@ public class WorkoutExerciseController {
 
     // add exercise to workout
     @PostMapping ("/{exerciseId}")
-    public WorkoutExerciseResponse addExerciseToWorkout(@PathVariable Long wokroutId, @PathVariable Long exerciseId) {
-        WorkoutExercise workoutExercise = service.addExercise(wokroutId, exerciseId);
+    public WorkoutExerciseResponse addExerciseToWorkout(@PathVariable Long wokroutId, @PathVariable Long exerciseId, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        WorkoutExercise workoutExercise = service.addExercise(wokroutId, exerciseId, email);
 
         // helper method at the bottom
         return dtoResponse(workoutExercise);
@@ -43,8 +47,9 @@ public class WorkoutExerciseController {
 
     // delete exercise from workout
     @DeleteMapping ("/{exerciseId}")
-    public ResponseEntity<Void> deleteExerciseFromWorkout(@PathVariable Long workoutId, @PathVariable Long exerciseId) {
-        service.removeExercise(workoutId, exerciseId);
+    public ResponseEntity<Void> deleteExerciseFromWorkout(@PathVariable Long workoutId, @PathVariable Long exerciseId, @AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getSubject();
+        service.removeExercise(workoutId, exerciseId, email);
         return ResponseEntity.noContent().build();
     }
 

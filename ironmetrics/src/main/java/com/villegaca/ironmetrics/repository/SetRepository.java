@@ -13,4 +13,8 @@ public interface SetRepository extends JpaRepository<Set, Long>{
         Long workoutId, 
         Long exerciseId
     );
+
+    Optional<Set> findByIdAndWorkoutExercise_Workout_User_Email(Long setId, String email);
+
+    List<Set> findByWorkoutExercise_Workout_User_Email(String email);
 }

@@ -31,8 +31,4 @@ public class ExerciseMuscle {
     @ManyToOne (fetch = FetchType.LAZY, optional = false)
     @JoinColumn (name = "muscle_id", nullable = false)
     private Muscle muscle;
-
-    @Enumerated (EnumType.STRING)
-    @Column (nullable = false)
-    private MuscleRole role;
 }

@@ -62,7 +62,8 @@ public class WorkoutExerciseController {
             workoutExercise.getWorkout().getId(),
             workoutExercise.getExercise().getId(),
             workoutExercise.getExercise().getName(),
-            workoutExercise.getExercise().getNotes()
+            workoutExercise.getExercise().getNotes(),
+            workoutExercise.getExercise().getPhotoUrl()
         );
     }
 }

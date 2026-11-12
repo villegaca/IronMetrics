@@ -8,4 +8,8 @@ import com.villegaca.ironmetrics.model.Exercise;
 public interface ExerciseRepository extends JpaRepository<Exercise, Long>{
     
     List<Exercise> findByNameContainingIgnoreCase(String name);
+
+    Exercise findByNameIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCase(String exerciseName);
 }

@@ -4,5 +4,6 @@ public record WorkoutExerciseResponse (
     Long workoutId,
     Long exerciseId,
     String exerciseName,
-    String exerciseNotes
+    String exerciseNotes,
+    String photoUrl
 ) {}

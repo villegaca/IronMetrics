@@ -3,6 +3,7 @@ package com.villegaca.ironmetrics.service;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.villegaca.ironmetrics.dto.AppUser.AppUserRequest;
@@ -11,7 +12,6 @@ import com.villegaca.ironmetrics.mapper.AppUserMapper;
 import com.villegaca.ironmetrics.model.AppUser;
 import com.villegaca.ironmetrics.repository.AppUserRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service 
@@ -24,7 +24,7 @@ public class AppUserService {
     public AppUser getUserByEmail(String email) {
         return repo.findByEmail(email)
             .orElseThrow(() ->
-                new EntityNotFoundException("User not found" + email));
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found" + email));
     }
 
     // same as getUserById but returns a DTO
@@ -72,6 +72,7 @@ public class AppUserService {
     }
 
     // delete user
+    @Transactional 
     public void deleteUser (String email) {
         repo.deleteByEmail(email);
     }

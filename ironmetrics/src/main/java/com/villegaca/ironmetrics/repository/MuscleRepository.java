@@ -5,4 +5,7 @@ import com.villegaca.ironmetrics.model.Muscle;
 
 public interface MuscleRepository extends JpaRepository<Muscle, Long>{
     
+    boolean existsByNameIgnoreCase(String name);
+
+    Muscle findByNameIgnoreCase(String name);
 }
